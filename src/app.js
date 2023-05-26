@@ -98,7 +98,7 @@ drawButton.addEventListener("click", function() {
 });
 
 sortButton.addEventListener("click", function() {
-  const sortedCards = bubbleSort(generatedCards);
+  const sortedCards = selectionSort(generatedCards);
   changeLog = [];
 
   for (let i = 0; i < sortedCards.length; i++) {
@@ -109,46 +109,33 @@ sortButton.addEventListener("click", function() {
   displayChangeLog();
 });
 
-function bubbleSort(arr) {
+function selectionSort(arr) {
   let len = arr.length;
-  let swapped;
 
-  do {
-    swapped = false;
+  for (let i = 0; i < len - 1; i++) {
+    let minIndex = i;
 
-    for (let i = 0; i < len - 1; i++) {
-      const currentValue = getValue(arr[i]);
-      const nextValue = getValue(arr[i + 1]);
+    for (let j = i + 1; j < len; j++) {
+      const value1 = parseInt(arr[j].querySelector(".number").innerHTML);
+      const value2 = parseInt(arr[minIndex].querySelector(".number").innerHTML);
 
-      if (currentValue > nextValue) {
-        [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
-        swapped = true;
-
-        // Capture the intermediate step
-        const step = arr.map(card => card.outerHTML);
-        changeLog.push(step);
+      if (value1 < value2) {
+        minIndex = j;
       }
     }
-  } while (swapped);
+
+    if (minIndex !== i) {
+      let temp = arr[i];
+      arr[i] = arr[minIndex];
+      arr[minIndex] = temp;
+    }
+
+    // Store the current state of the cards after each step
+    let step = arr.map(card => card.outerHTML);
+    changeLog.push(step);
+  }
 
   return arr;
-}
-
-function getValue(card) {
-  const numberElement = card.querySelector(".number");
-  const value = numberElement.innerHTML;
-
-  if (value === "A") {
-    return 1;
-  } else if (value === "J") {
-    return 11;
-  } else if (value === "Q") {
-    return 12;
-  } else if (value === "K") {
-    return 13;
-  } else {
-    return parseInt(value);
-  }
 }
 
 function displayChangeLog() {
@@ -160,3 +147,4 @@ function displayChangeLog() {
     changeLogElement.appendChild(cardEntry);
   }
 }
+
